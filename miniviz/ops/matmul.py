@@ -1,9 +1,10 @@
 """NumPy wrapper around the naive C matmul kernel.
 
-The wrapper handles the boring-but-essential parts: validating shapes, coercing
-inputs to C-contiguous float32 (so the C side can read raw pointers without
-surprises about strides or dtype), allocating the output, and calling the C
-function with ctypes pointers.
+The wrapper handles:
+ - validating shapes, 
+ - coercing inputs to C-contiguous float32, 
+ - allocating the output, 
+ - calling the C function with ctypes pointers.
 
 The C kernel itself is dtype-locked to float32 — that's the precision we use
 throughout the library, matching most modern DL practice.
