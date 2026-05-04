@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "miniviz"
+version = "0.0.1"
+description = "A minimal vision library exploring CNNs vs Vision Transformers, built from scratch in C with a Python interface."
+requires-python = ">=3.12"
+license = "MIT AND (Apache-2.0 OR BSD-2-Clause)"
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "numpy>=2.0,<3.0",
+]
+
+# Dev dependencies are declared as a PEP 735 dependency group so
+# `uv sync --group dev` (or just `uv sync` with the default group) installs
+# them. Runtime users won't see these.
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+# src-layout: tell setuptools that the importable packages live under src/.
+[tool.setuptools.packages.find]
+where = ["miniviz"]
+
+# Ship the compiled shared library inside the package, so an installed
+# miniviz can find its native code at miniviz/_native/libminiviz.{so,dylib}.
+[tool.setuptools.package-data]
+miniviz = ["_native/*.so", "_native/*.dylib"]
+
+# Pytest config. `pythonpath = ["src"]` lets tests `import miniviz` even
+# if the package hasn't been installed editable yet — useful for a fresh
+# clone where you've only run `make` and not `uv sync`.
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+
+lint.select = [
+    "D", # google-style docstrings
+    # ruff defaults:
+    "E4",
+    # additional rule groups:
+    "E5",    # line length
+    "E7",
+    "E9",
+    "F",
+    "I",     # flake8-import-order
+    "TID",   # flake8-tidy-imports
+    "UP006", # use PEP 585 type annotations (list not List, type not Type, etc)
+    "UP007", # use PEP 604 union syntax (str | None not Optional[str])
+]
+lint.ignore = [
+    "D100", # would require docstring for public module, but these tend to be ignored anyway
+    "D107", # would require docstring for __init__ module
+    # rules that directly contradict the coding standard:
+    "D202", # would require one blank line after the last section of a multi-line docstring
+    "D203", # would require one blank line at start of class docstring
+
+    # unnecessary rules:
+    "D213", # would require multi-line docstring to start with a hard return
+    "D401", # would require imperative mood in docstring
+    "D413", # would put blank line at end of each multiline docstring
+]
+lint.per-file-ignores."test_*.py" = [ "D" ]
+lint.flake8-tidy-imports.ban-relative-imports = "all"
+
+[tool.pyproject-fmt]
+column_width = 120
+indent = 4
+max_supported_python = "3.12"
