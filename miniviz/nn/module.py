@@ -1,5 +1,4 @@
-"""Abstract base class for differentiable layers and networks.
-"""
+"""Abstract base class for differentiable layers and networks."""
 
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
@@ -17,7 +16,7 @@ class Module(ABC):
         """Run the forward pass. Takes the input array and returns the output array. It
         caches whatever the backward pass will need (typically the input ``x``
         and any intermediate activations) as instance attributes.
-    
+
         Args:
             x: Input array.
 
@@ -28,7 +27,7 @@ class Module(ABC):
     @abstractmethod
     def backward(self, grad_y: np.ndarray) -> np.ndarray:
         """Run the backward pass. Takes the gradient of the loss with respect to this
-        module's *output* and returns the gradient with respect to its *input*.     
+        module's *output* and returns the gradient with respect to its *input*.
 
         Accumulates parameter gradients as a side effect (``param.grad +=
         ...``) and returns the gradient with respect to the input.
@@ -53,7 +52,7 @@ class Module(ABC):
 
     def zero_grad(self) -> None:
         """Reset every parameter's gradient buffer to zero, in place.
-        
+
         Resetting accumulated grads between training steps is the optimizer's
         responsibility; `zero_grad` is a convenience that does it for you.
         """

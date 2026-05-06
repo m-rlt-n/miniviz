@@ -35,14 +35,16 @@ class Linear(Module):
     _x: np.ndarray | None = attr.field(init=False, default=None)
 
     def __attrs_post_init__(self) -> None:
-        """Initialize ``weights`` (Kaiming-scaled normals) and ``bias`` (zeros).
-        """
+        """Initialize ``weights`` (Kaiming-scaled normals) and ``bias`` (zeros)."""
         rng = np.random.default_rng(self.seed)
         scale = np.sqrt(2.0 / self.input_size).astype(np.float32)
-        W = rng.standard_normal(
-            (self.input_size, self.output_size),
-            dtype=np.float32,
-        ) * scale
+        W = (
+            rng.standard_normal(
+                (self.input_size, self.output_size),
+                dtype=np.float32,
+            )
+            * scale
+        )
         b = np.zeros(self.output_size, dtype=np.float32)
         self.weights = Parameter(data=W)
         self.bias = Parameter(data=b)

@@ -1,9 +1,9 @@
 """NumPy wrapper around the naive C matmul kernel.
 
 The wrapper handles:
- - validating shapes, 
- - coercing inputs to C-contiguous float32, 
- - allocating the output, 
+ - validating shapes,
+ - coercing inputs to C-contiguous float32,
+ - allocating the output,
  - calling the C function with ctypes pointers.
 
 The C kernel itself is dtype-locked to float32 — that's the precision we use
@@ -41,9 +41,7 @@ def matmul(a: np.ndarray, b: np.ndarray) -> np.ndarray:
         2D float32 array of shape ``(M, N)`` containing ``a @ b``.
     """
     if a.ndim != 2 or b.ndim != 2:
-        raise ValueError(
-            f"matmul expects 2D arrays, got shapes {a.shape} and {b.shape}"
-        )
+        raise ValueError(f"matmul expects 2D arrays, got shapes {a.shape} and {b.shape}")
 
     M, K = a.shape
     K2, N = b.shape
