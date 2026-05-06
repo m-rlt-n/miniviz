@@ -2,7 +2,7 @@
 
 import attr
 import numpy as np
-from typing import Iterator
+from collections.abc import Iterator
 
 from miniviz.nn.module import Module
 from miniviz.nn.parameter import Parameter
@@ -17,10 +17,28 @@ class Linear(Module):
         weights: Weights learned for linear layer (K, M)
         bias: Intercept parameter for linear layer (M,)
     """
+    input_size: int
+    output_size: int
+    weights: Parameter = attr.field(init=False)
+    bias: Parameter = attr.field(init=False)
+    _x: np.ndarray | None = attr.field(init=False, default=None)
 
-    _x: np.ndarray = attr.field()
-    weights: Parameter = attr.field()
-    bias: Parameter = attr.field()
+    def __attrs_post_init__(self):
+        """Initilize weights and bias
+        """
+        scale = np.sqrt(2.0 / self.input_size).astype(np.float32)
+        W = (
+                np.random.randn(
+                    self.input_size, 
+                    self.output_size,
+                ).astype(np.float32) * scale
+            )
+        b = np.zeros(
+                self.output_size, 
+                dtype=np.float32,
+            )
+        self.weights = Parameter(data=W)
+        self.bias = Parameter(data=b)
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         """Forward method for linear layer. 
@@ -33,7 +51,7 @@ class Linear(Module):
             The output array (N, M)
         """
         self._x = x
-        return matmul(self._x, self.weights.data) + self.bias
+        return matmul(self._x, self.weights.data) + self.bias.data
 
     def backward(self, grad_y: np.ndarray) -> np.ndarray:
         """Backward method for linear layer. 
