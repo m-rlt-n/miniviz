@@ -13,8 +13,9 @@ class Module(ABC):
 
     @abstractmethod
     def forward(self, x: np.ndarray) -> np.ndarray:
-        """Run the forward pass. Takes the input array and returns the output array. It
-        caches whatever the backward pass will need (typically the input ``x``
+        """Run the forward pass. Takes the input array and returns the output array.
+
+        It caches whatever the backward pass will need (typically the input ``x``
         and any intermediate activations) as instance attributes.
 
         Args:
@@ -26,8 +27,10 @@ class Module(ABC):
 
     @abstractmethod
     def backward(self, grad_y: np.ndarray) -> np.ndarray:
-        """Run the backward pass. Takes the gradient of the loss with respect to this
-        module's *output* and returns the gradient with respect to its *input*.
+        """Run the backward pass.
+
+        Takes the gradient of the loss with respect to this module's *output* and
+        returns the gradient with respect to its *input*.
 
         Accumulates parameter gradients as a side effect (``param.grad +=
         ...``) and returns the gradient with respect to the input.
