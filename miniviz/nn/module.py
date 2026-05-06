@@ -38,7 +38,7 @@ class Module(ABC):
 
         Returns:
             Gradient of the loss with respect to this module's input, shaped
-            like the ``x`` that was passed to :meth:`forward`.
+            like the ``x`` that was passed to `forward`.
         """
 
     def parameters(self) -> Iterator[Parameter]:
@@ -47,7 +47,7 @@ class Module(ABC):
         Default: no parameters (suitable for stateless layers like ``ReLU``).
 
         Yields:
-            Each :class:`Parameter` instance owned by this module.
+            Each `Parameter` instance owned by this module.
         """
         return iter(())
 
@@ -61,5 +61,5 @@ class Module(ABC):
             p.grad[...] = 0.0
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
-        """Invoke :meth:`forward` via call syntax (``layer(x)``)."""
+        """Invoke `forward` via call syntax (``layer(x)``)."""
         return self.forward(x)
