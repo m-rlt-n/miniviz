@@ -79,8 +79,7 @@ def lib() -> ctypes.CDLL:
     path = _NATIVE_DIR / _lib_filename()
     if not path.exists():
         raise FileNotFoundError(
-            f"miniviz: compiled library not found at {path}. "
-            "Run `make` from the project root first."
+            f"miniviz: compiled library not found at {path}. Run `make` from the project root first."
         )
 
     loaded = ctypes.CDLL(str(path))
