@@ -1,19 +1,10 @@
-"""Numerical gradient checker.
+"""Numerical gradient checker.Check numerical gradients with a 
+finite-difference estimate of ``df/dx``.
 
-Finite-difference estimate of ``df/dx``, used to verify that a layer's
-hand-written ``backward`` matches the truth implied by its ``forward``.
-The standard pattern: wrap the layer in a scalar-valued loss closure,
-compute the analytical gradient via ``backward``, compute the numerical
-gradient via :func:`numerical_gradient`, and assert they're close to
-``float32`` tolerance.
+    f'(x_i) ≈ [f(x_i + eps) - f(x_i - eps)] / (2*eps)
 
-Why central differences. The forward-difference estimate ``(f(x+eps) -
-f(x)) / eps`` has truncation error proportional to ``eps``; the central
-form ``(f(x+eps) - f(x-eps)) / (2*eps)`` has error proportional to
-``eps**2``, which is dramatically more accurate for the same step size.
-For float32 inputs, the practical sweet spot is ``eps ~ 1e-3`` — large
-enough that the subtraction doesn't lose meaningful bits to roundoff,
-small enough that truncation error stays at the ``1e-6`` level.
+We constrain the loss by wrapping the value w/in a tolerance of eps,
+then compute the gradient via ``backward`` and assert they're close.
 """
 
 from collections.abc import Callable
@@ -32,13 +23,6 @@ def numerical_gradient(
     ``+eps`` at that position, evaluates ``f``, then by ``-eps``, evaluates
     again, and forms ``(f(x+eps) - f(x-eps)) / (2*eps)``. The result has
     the same shape and dtype as ``x``.
-
-    Implementation note: ``x`` is mutated in place during evaluation and
-    restored before each iteration ends and before the function returns.
-    ``f`` must therefore not retain references to ``x`` across calls in a
-    way that could be confused by these transient perturbations (in
-    practice this means: don't cache ``x`` inside ``f`` and read it back
-    later).
 
     Args:
         f: A function mapping an ndarray of shape ``x.shape`` to a scalar
@@ -61,4 +45,5 @@ def numerical_gradient(
         loss_minus = float(f(x))
         x[idx] = original
         grad[idx] = (loss_plus - loss_minus) / (2.0 * eps)
+
     return grad
