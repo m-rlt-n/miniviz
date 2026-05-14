@@ -11,10 +11,26 @@ from collections.abc import Callable
 
 import numpy as np
 
+def numerical_x_gradient(
+    f: Callable[[np.ndarray], float], 
+    x: np.ndarray,
+    eps: float = 1e-3,
+) -> np.ndarray:
+    grad = np.zeros_like(x)
+    for idx in np.ndindex(x.shape):
+        original = x[idx]
+        x[idx] = original + eps
+        loss_plus = float(f(x))
+        x[idx] = original - eps
+        loss_minus = float(f(x))
+        x[idx] = original
+        grad[idx] = (loss_plus - loss_minus) / (2.0 * eps)
+
+    return grad
 
 def numerical_gradient(
-    f: Callable[[np.ndarray], float],
-    x: np.ndarray,
+    f: Callable[[], float],
+    params: np.ndarray,
     eps: float = 1e-3,
 ) -> np.ndarray:
     """Estimate ``df/dx`` at ``x`` using central differences.
@@ -27,7 +43,7 @@ def numerical_gradient(
     Args:
         f: A function mapping an ndarray of shape ``x.shape`` to a scalar
             loss. Must accept the same array object on every call.
-        x: Point at which to evaluate the numerical gradient. Will be
+        params: Point at which to evaluate the numerical gradient. Will be
             transiently perturbed in place during the call.
         eps: Perturbation magnitude. Default ``1e-3`` is sized for float32
             inputs; for float64 inputs ``eps=1e-5`` is tighter.
@@ -36,14 +52,14 @@ def numerical_gradient(
         Array of the same shape and dtype as ``x`` containing the
         central-difference estimate of ``df/dx`` at each element.
     """
-    grad = np.zeros_like(x)
-    for idx in np.ndindex(x.shape):
-        original = x[idx]
-        x[idx] = original + eps
-        loss_plus = float(f(x))
-        x[idx] = original - eps
-        loss_minus = float(f(x))
-        x[idx] = original
+    grad = np.zeros_like(params)
+    for idx in np.ndindex(params.shape):
+        original = params[idx]
+        params[idx] = original + eps
+        loss_plus = float(f())
+        params[idx] = original - eps
+        loss_minus = float(f())
+        params[idx] = original
         grad[idx] = (loss_plus - loss_minus) / (2.0 * eps)
 
     return grad
