@@ -5,8 +5,7 @@ Forward: output matches a hand-rolled numpy reference at float32 tolerance.
 Backward: analytical gradients (grad_x, grad_W, grad_b) match a numerical
 gradient computed by central differences. The numerical check is the
 authoritative oracle here — if it agrees with what `backward` returns, the
-math in the layer is right. The same pattern (and this same helper) will
-test every layer we add after this one.
+math in the layer is right.
 """
 
 import numpy as np
@@ -23,7 +22,7 @@ def _build_layer_and_x(
 ) -> tuple[Linear, np.ndarray]:
     """Construct a deterministic Linear and a deterministic float32 input."""
     layer = Linear(input_size=input_size, output_size=output_size, seed=seed)
-    rng = np.random.default_rng(seed + 1)
+    rng = np.random.default_rng(seed=seed)
     x = rng.standard_normal((batch, input_size), dtype=np.float32)
     return layer, x
 
@@ -102,7 +101,7 @@ def test_zero_grad_resets_to_zero():
     y = layer(x)
     layer.backward(np.ones_like(y))
 
-    # Sanity: at least the weights grad accumulated something
+    # Confirm that weights and gradients accumulated something.
     assert layer.weights.grad.any()
 
     layer.zero_grad()
