@@ -15,6 +15,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=2.0,<3.0",
+    "attrs>=24.0",
 ]
 
 # Dev dependencies are declared as a PEP 735 dependency group so
