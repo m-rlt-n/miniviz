@@ -24,7 +24,7 @@ def test_x_gradient_of_squared_sum():
     x = rng.standard_normal((3, 4), dtype=np.float32)
 
     def f(xx: np.ndarray) -> float:
-        return float((xx ** 2).sum())
+        return float((xx**2).sum())
 
     analytical = 2.0 * x
     numerical = numerical_x_gradient(f, x.copy())
@@ -56,7 +56,7 @@ def test_closure_gradient_of_squared_sum():
     analytical = 2.0 * x.copy()  # snapshot before any perturbation
 
     def f() -> float:
-        return float((x ** 2).sum())
+        return float((x**2).sum())
 
     numerical = numerical_gradient(f, x)
     np.testing.assert_allclose(numerical, analytical, rtol=1e-2, atol=1e-3)
