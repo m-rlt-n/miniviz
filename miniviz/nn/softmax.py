@@ -1,4 +1,22 @@
-"""Softmax layer for nn."""
+"""Softmax layer for nn.
+
+The equation for softmax is fairly intuitive. Its derivitive is famously not.
+
+Here we use the following implementation.
+``dL/dz = p * (dL/dp - sum(p * dL/dp))``
+
+A three class example of the reasoning is included below:
+
+dL/dz_A = grad_y[A] ·  p_A·(1 - p_A)
+        + grad_y[B] · (-p_B · p_A)
+        + grad_y[C] · (-p_C · p_A)
+
+        = p_A · [ grad_y[A]·(1 - p_A) - grad_y[B]·p_B - grad_y[C]·p_C ]
+
+        = p_A · [ grad_y[A] - ( grad_y[A]·p_A + grad_y[B]·p_B + grad_y[C]·p_C ) ]
+
+        = p_A · [ grad_y[A] - Σ_j grad_y[j]·p_j ]
+"""
 
 import attr
 import numpy as np
