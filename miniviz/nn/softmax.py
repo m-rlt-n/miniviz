@@ -10,8 +10,6 @@ from miniviz.nn.module import Module
 class Softmax(Module):
     """Differentiable softmax layer.
 
-    ``p_i = exp(z_i - max(z)) / sum_j exp(z_j - max(z))``
-
     Attrs:
         _p: Private cache of the last set of probabilities output by
             ``forward``. ``None`` until ``forward`` has run.
@@ -22,13 +20,17 @@ class Softmax(Module):
     def forward(self, x: np.ndarray) -> np.ndarray:
         """Forward method for softmax.
 
-        1. Shift values in input array to be at most 0 (to protect from
-        overflow)
-        2. Exponentiate the full aray.
-        3. Normalize cell values using the rowwise sum.
+        ``p_i = exp(z_i - max(z)) / sum_j exp(z_j - max(z))``
+
+        Note:
+            Subtracts the per-row max before exponentiating. Softmax is
+            shift-invariant, so this is a no-op mathematically and prevents
+            ``np.exp`` overflow for large logits.
 
         Args:
-            x: an array of logits returned by upstream layers.
+            x: Logits, shape ``(..., K)``. Any number of leading dimensions
+                (e.g. ``(N, K)`` for a classifier head, ``(B, H, N, N)`` for an
+                attention map). Softmax is applied along the last axis.
 
         Returns:
             The probability of each class, shape ``(N, K)``
